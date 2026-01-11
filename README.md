@@ -87,10 +87,61 @@ Runs through all phases without pausing. Compacts automatically between phases a
 
 ### Phase Workflow
 
+```mermaid
+flowchart TB
+    subgraph Input
+        G[Goal Description]
+    end
+
+    subgraph Spec["Specification Phases"]
+        R[Requirements]
+        D[Design]
+        T[Tasks]
+    end
+
+    subgraph Exec["Execution Phase"]
+        E1[Task 1]
+        E2[Task 2]
+        EN[Task N]
+    end
+
+    subgraph Output
+        C[Complete]
+    end
+
+    G --> R
+    R -->|compact| D
+    D -->|compact| T
+    T -->|compact| E1
+    E1 -->|compact| E2
+    E2 -->|compact| EN
+    EN --> C
+
+    R -.->|interactive| A1{Approve?}
+    D -.->|interactive| A2{Approve?}
+    T -.->|interactive| A3{Approve?}
+
+    A1 -->|yes| D
+    A2 -->|yes| T
+    A3 -->|yes| E1
 ```
-Goal → Requirements → Design → Tasks → Execution
-         ↓              ↓        ↓         ↓
-      compact        compact  compact   compact (per task)
+
+### State Management
+
+```mermaid
+flowchart LR
+    subgraph Files["Persistent State"]
+        P[".ralph-progress.md<br/>Learnings & Progress"]
+        S[".ralph-state.json<br/>Loop State"]
+    end
+
+    subgraph Compaction
+        CM[Context Window<br/>Management]
+    end
+
+    P -->|survives| CM
+    S -->|tracks| CM
+    CM -->|preserves key context| P
 ```
 
 ### Smart Compaction
